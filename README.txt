@@ -1,5 +1,5 @@
 ECE 681: 
-Restaurant Closures Dataset 
+Food Inspections Prediction
 ---------------------------
 
 This github project serves as a reproducible proposal for an Pattern Recognition course completed 
@@ -23,23 +23,24 @@ Scripts for pulling (GetYelp.py) and cleaning data (CleanYelp.py) are presented 
 Available Data
 --------------
 
-Businesses.csv - The raw business data pulled from Yelp. One row per restaurant. 
+Wake_County/Restaurants_in_Wake_County__Location.csv - Data provided by Data-Wake.opendata.arcgis.com.
+Has restaurant list and details
+
+Wake_County/Restaurants_in_Wake_County__Violations.csv - Data provided by Data-Wake.opendata.arcgis.com.
+Has the set of violations committed by each restauratn
+
+Yelp/Businesses.csv - The raw business data pulled from Yelp. One row per restaurant. 
 See https://www.yelp.com/developers/documentation/v3/business_search
 
-Categories.csv - The raw category data pulled from Yelp. 1 - 3 rows per restaurant.
+Yelp/Categories.csv - The raw category data pulled from Yelp. 1 - 3 rows per restaurant.
 See https://www.yelp.com/developers/documentation/v3/all_category_list
 
-Reviews.csv - The raw review data pulled from Yelp. 0-3 rows per restaurant 
+Yelp/Reviews.csv - The raw review data pulled from Yelp. 0-3 rows per restaurant 
 
+Utils/stopCategories.txt - Non restaurant categories that were removed (see CleanYelp.py)
 
-stopCategories.txt - Non restaurant categories that were removed (see CleanYelp.py)
-
-RestaurantClosures.csv - "Analytics-ready" dataset for this project. One row per restaurant.
+FoodInspections.csv - "Analytics-ready" dataset for this project. One row per restaurant.
 	Only includes businesses with at least one category and one review.
-	
-	
-Restaurants_in_Wake_County__Yelp.csv - Data provided by Data-Wake.opendata.arcgis.com. Includes
-s
 
 
 Extending the Effort 

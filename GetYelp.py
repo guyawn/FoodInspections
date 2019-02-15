@@ -22,7 +22,7 @@ if __name__ == "__main__":
     }
 
     # Open the dataset from Wake County (
-    with open('data/Wake_County/Restaurants_in_Wake_County__Combined_Test.csv', 'r') as csvRead:
+    with open('data/Wake_County/Restaurants_in_Wake_County__Combined2.csv', 'r') as csvRead:
 
         # DataFrames to store the Yelp output
         businesses = pd.DataFrame()
@@ -39,10 +39,14 @@ if __name__ == "__main__":
 
             # Build the query based on the restaurant name and address
             restaurantName = re.sub("#\d+", "", row[1])
-            restaurantAddress = (row[2] + ", " + row[3] + ", NC")
+            restaurantLongitude = row[5]
+            restaurantLatitude = row[6]
+
             url_params = {
                 'term': restaurantName,
-                'location': restaurantAddress,
+                'latitude': restaurantLatitude,
+                'longitude': restaurantLongitude,
+                'radius': 500,
                 'sort_by': 'best_match',
                 'limit': 5
             }
@@ -56,7 +60,7 @@ if __name__ == "__main__":
 
                     # Track the processing
                     i = i + 1
-                    print(str(i) + " Input Name: " + row[4] + ", Yelp Name: ", response['businesses'][0]['name'])
+                    print(str(i) + " Input Name: " + restaurantName + ", Yelp Name: ", response['businesses'][0]['name'])
 
                     # Some restaurants don't have price listed. Use ? instead
                     price = response['businesses'][0]['price'] if "price" in (response['businesses'][0]).keys() else "?"
@@ -65,8 +69,9 @@ if __name__ == "__main__":
                     businesses = businesses.append({
                         'business_id': response['businesses'][0]['id'],
                         'alias': response['businesses'][0]['alias'],
-                        'name': response['businesses'][0]['name'],
-                        'had_critical_violation': row[9],
+                        'yelp_name': response['businesses'][0]['name'],
+                        'wake_county_name' : restaurantName,
+                        'had_critical_violation': row[7],
                         'restaurant_open_date': row[4],
                         'is_closed': response['businesses'][0]['is_closed'],
                         'review_count': response['businesses'][0]['review_count'],
@@ -104,29 +109,31 @@ if __name__ == "__main__":
 
                     # Write outputs to csv every 100 cases.
                     if (i % 100) == 0:
-                        businesses.to_csv("data/Yelp/Businesses.csv",
-                                          columns=['business_id', 'alias', 'name',
+                        businesses.to_csv("data/Yelp/Businesses2.csv",
+                                          columns=['business_id', 'alias', 'yelp_name', 'wake_county_name',
+                                                   'had_critical_violation', 'restaurant_open_date',
                                                    'is_closed', 'review_count', 'rating',
                                                    'latitude', 'longitude', 'price', 'location_city',
                                                    'location_zip_code', 'url'],
                                           index=False)
-                        categories.to_csv("data/Yelp/Categories.csv",
+                        categories.to_csv("data/Yelp/Categories2.csv",
                                           columns=['business_id', 'alias', 'title'],
                                           index=False)
-                        reviews.to_csv("data/Yelp/Reviews.csv",
+                        reviews.to_csv("data/Yelp/Reviews2.csv",
                                        columns=['business_id', 'review_id', 'text', 'rating', 'time_created'],
                                        index=False)
 
     # Write the final set of outputs
-    businesses.to_csv("data/Yelp/Businesses.csv",
-                      columns=['business_id', 'alias', 'name',
-                               'is_closed', 'review_count', 'rating',
+    businesses.to_csv("data/Yelp/Businesses2.csv",
+                      columns=['business_id', 'alias', 'yelp_name', 'wake_county_name',
+                               'had_critical_violation', 'restaurant_open_date',
+                                'is_closed', 'review_count', 'rating',
                                'latitude', 'longitude', 'price', 'location_city',
                                'location_zip_code', 'url'],
                       index=False)
-    categories.to_csv("data/Yelp/Categories.csv",
+    categories.to_csv("data/Yelp/Categories2.csv",
                       columns=['business_id', 'alias', 'title'],
                       index=False)
-    reviews.to_csv("data/Yelp/Reviews.csv",
+    reviews.to_csv("data/Yelp/Reviews2.csv",
                    columns=['business_id', 'review_id', 'text', 'rating', 'time_created'],
                    index=False)

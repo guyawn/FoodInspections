@@ -9,9 +9,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 if __name__ == "__main__":
 
     # Read the data in
-    businesses = pd.read_csv("Data/Businesses.csv")
-    categories = pd.read_csv("Data/Categories.csv")
-    reviews = pd.read_csv("Data/Reviews.csv")
+    businesses = pd.read_csv("Data/Yelp/Businesses.csv")
+    categories = pd.read_csv("Data/Yelp/Categories.csv")
+    reviews = pd.read_csv("Data/Yelp/Reviews.csv")
 
     ##
     # Process Businesses
@@ -23,7 +23,9 @@ if __name__ == "__main__":
     # Turn price into a binary variable
     businesses = pd.get_dummies(businesses, columns=["price"])
 
-    # Drop duplicates (arise from incorrect pulls)
+    # Drop duplicates (arise from incorrect pulls). Temporarily ignores the wake_name for now.
+    county_name = businesses['wake_county_name']
+    businesses.drop(columns=['wake_county_name'], inplace=False)
     businesses = businesses.drop_duplicates()
     categories = categories.drop_duplicates()
     reviews = reviews.drop_duplicates()
@@ -39,7 +41,7 @@ if __name__ == "__main__":
 
     # Remove categories that imply this isn't a restaurant
     # Will cause the merge to later filter out non-restaurants.
-    with open('Data/stopCategories.txt') as f:
+    with open('Data/Utils/stopCategories.txt') as f:
         stopCategories = f.read().splitlines()
         categories.drop(stopCategories, axis=1, inplace=True)
         categories = categories.loc[categories.sum(axis=1) != 0]
@@ -82,12 +84,12 @@ if __name__ == "__main__":
     # Finalize dataset
     ##
 
-    # Combine the datasets together
+    # Combine the data sets together
     full = pd.merge(businesses, categories, on="business_id")
     full = pd.merge(full, reviewBOW, on="business_id")
 
     # Write data
-    full.to_csv("Data/RestaurantClosures.csv", index=False)
+    full.to_csv("Data/FoodInspections.csv", index=False)
 
 
 

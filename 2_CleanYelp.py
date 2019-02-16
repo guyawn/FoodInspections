@@ -4,7 +4,7 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import CountVectorizer
-
+from nltk.metrics import edit_distance
 
 if __name__ == "__main__":
 
@@ -14,6 +14,7 @@ if __name__ == "__main__":
     reviews = pd.read_csv("Data/Yelp/Reviews.csv")
 
     ##
+
     # Process Businesses
     ##
 
@@ -24,11 +25,30 @@ if __name__ == "__main__":
     businesses = pd.get_dummies(businesses, columns=["price"])
 
     # Drop duplicates (arise from incorrect pulls). Temporarily ignores the wake_name for now.
-    county_name = businesses['wake_county_name']
-    businesses.drop(columns=['wake_county_name'], inplace=False)
+    # Sort the businsesse by edit distance between names, in order to more likely remove
+    # the unmatched cases
+    yelp_name_lower = [name.lower() for name in businesses['yelp_name']]
+    wake_county_name_lower = [name.lower() for name in businesses['wake_county_name']]
+    businessesOrder = []
+    for i in range(0, len(yelp_name_lower)):
+        distance = edit_distance(yelp_name_lower[i], wake_county_name_lower[i])
+        businessesOrder.append(distance)
+    businesses['order'] = businessesOrder
+    businesses.sort_values(['order'], inplace=True)
+    businesses.drop('order', axis=1, inplace=True)
+
+    wake_county_name = businesses['wake_county_name']
+    businesses.drop(columns=['wake_county_name'], inplace=True)
+    restaurant_open_date = businesses['restaurant_open_date']
+    businesses.drop(columns=['restaurant_open_date'], inplace=True)
+
     businesses = businesses.drop_duplicates()
     categories = categories.drop_duplicates()
     reviews = reviews.drop_duplicates()
+
+    businesses.insert(2, 'wake_county_name', wake_county_name)
+    businesses.insert(5, 'restaurant_open_date', restaurant_open_date)
+
 
     ##
     # Process categories
@@ -43,6 +63,7 @@ if __name__ == "__main__":
     # Will cause the merge to later filter out non-restaurants.
     with open('Data/Utils/stopCategories.txt') as f:
         stopCategories = f.read().splitlines()
+        stopCategories = [category for category in stopCategories if category in categories.columns]
         categories.drop(stopCategories, axis=1, inplace=True)
         categories = categories.loc[categories.sum(axis=1) != 0]
 
@@ -88,8 +109,12 @@ if __name__ == "__main__":
     full = pd.merge(businesses, categories, on="business_id")
     full = pd.merge(full, reviewBOW, on="business_id")
 
+    # Add the name name matching variable
+    bad_match = ''
+    full.insert(0, 'bad_name_match', bad_match)
+
     # Write data
-    full.to_csv("Data/FoodInspections.csv", index=False)
+    full.to_csv("Data/IncludesBadMatches/NeedsBadMatchRemoval.csv", index=False)
 
 
 

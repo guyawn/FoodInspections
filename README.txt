@@ -20,6 +20,8 @@ selected. Note that both the cateogires and reviews result in fairly sparse repr
 Scripts for pulling (GetYelp.py) and cleaning data (CleanYelp.py) are presented for reproducibility.
 
 
+
+
 Available Data
 --------------
 
@@ -51,13 +53,8 @@ and get a api_key from the Yelp developers site. You can then put it into the fo
 in config-format.json and rename the file config.json. That will allow you to pull from your 
 own account. 
 
+The order to run the scripts is implied by their names.
+
 The natural language processing pipeline here, used to build RestaurantClosures.csv was pretty
-basic, Intro-to-NLP-level processing. One major room for additional development is the application
+a basic, Intro-to-NLP-level processing. One major room for additional development is the application
 of additional techniques to extract information from the reviews.
-
-
-
-
-
-
-

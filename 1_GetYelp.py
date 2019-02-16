@@ -65,6 +65,10 @@ if __name__ == "__main__":
                     # Some restaurants don't have price listed. Use ? instead
                     price = response['businesses'][0]['price'] if "price" in (response['businesses'][0]).keys() else "?"
 
+                    date = row[4]
+                    year = int(date[0:4])
+                    age = 2019 - year
+
                     # Add business data
                     businesses = businesses.append({
                         'business_id': response['businesses'][0]['id'],
@@ -72,7 +76,7 @@ if __name__ == "__main__":
                         'yelp_name': response['businesses'][0]['name'],
                         'wake_county_name' : restaurantName,
                         'had_critical_violation': row[7],
-                        'restaurant_open_date': row[4],
+                        'years_open': age,
                         'is_closed': response['businesses'][0]['is_closed'],
                         'review_count': response['businesses'][0]['review_count'],
                         'rating': response['businesses'][0]['rating'],
@@ -111,7 +115,7 @@ if __name__ == "__main__":
                     if (i % 100) == 0:
                         businesses.to_csv("data/Yelp/Businesses2.csv",
                                           columns=['business_id', 'alias', 'yelp_name', 'wake_county_name',
-                                                   'had_critical_violation', 'restaurant_open_date',
+                                                   'had_critical_violation', 'years_open',
                                                    'is_closed', 'review_count', 'rating',
                                                    'latitude', 'longitude', 'price', 'location_city',
                                                    'location_zip_code', 'url'],
@@ -126,7 +130,7 @@ if __name__ == "__main__":
     # Write the final set of outputs
     businesses.to_csv("data/Yelp/Businesses2.csv",
                       columns=['business_id', 'alias', 'yelp_name', 'wake_county_name',
-                               'had_critical_violation', 'restaurant_open_date',
+                               'had_critical_violation', 'years_open',
                                 'is_closed', 'review_count', 'rating',
                                'latitude', 'longitude', 'price', 'location_city',
                                'location_zip_code', 'url'],

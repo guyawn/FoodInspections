@@ -39,15 +39,15 @@ if __name__ == "__main__":
 
     wake_county_name = businesses['wake_county_name']
     businesses.drop(columns=['wake_county_name'], inplace=True)
-    restaurant_open_date = businesses['restaurant_open_date']
-    businesses.drop(columns=['restaurant_open_date'], inplace=True)
+    years_open = businesses['years_open']
+    businesses.drop(columns=['years_open'], inplace=True)
 
     businesses = businesses.drop_duplicates()
     categories = categories.drop_duplicates()
     reviews = reviews.drop_duplicates()
 
     businesses.insert(2, 'wake_county_name', wake_county_name)
-    businesses.insert(5, 'restaurant_open_date', restaurant_open_date)
+    businesses.insert(5, 'years_open', years_open)
 
 
     ##

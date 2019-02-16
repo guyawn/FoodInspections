@@ -15,6 +15,12 @@ if __name__ == "__main__":
         # Filter out the bad matches
         foodInspections = foodInspections.loc[foodInspections['bad_name_match'] != 'x']
 
+        # Remove restaurants that were founded in 2018 or later
+        foodInspections = foodInspections.loc[foodInspections['years_open'] > 0]
+
+        # Remove some restaurants that got added in from San Francisco for some reason.
+        foodInspections = foodInspections.loc[foodInspections['longitude'] > -85]
+
         #Drop the name matching column
         foodInspections.drop(['bad_name_match'], axis=1, inplace=True)
 

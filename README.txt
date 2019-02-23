@@ -25,6 +25,11 @@ Scripts for pulling (GetYelp.py) and cleaning data (CleanYelp.py) are presented 
 Available Data
 --------------
 
+*****************************************************************************************
+FoodInspections.csv - "Analytics-ready" dataset for this project. One row per restaurant.
+	Only includes businesses with at least one category and one review.
+*****************************************************************************************
+
 Wake_County/Restaurants_in_Wake_County__Location.csv - Data provided by Data-Wake.opendata.arcgis.com.
 Has restaurant list and details
 
@@ -41,8 +46,6 @@ Yelp/Reviews.csv - The raw review data pulled from Yelp. 0-3 rows per restaurant
 
 Utils/stopCategories.txt - Non restaurant categories that were removed (see CleanYelp.py)
 
-FoodInspections.csv - "Analytics-ready" dataset for this project. One row per restaurant.
-	Only includes businesses with at least one category and one review.
 
 
 Extending the Effort 

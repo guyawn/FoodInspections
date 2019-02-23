@@ -58,3 +58,9 @@ The order to run the scripts is implied by their names.
 The natural language processing pipeline here, used to build RestaurantClosures.csv was pretty
 a basic, Intro-to-NLP-level processing. One major room for additional development is the application
 of additional techniques to extract information from the reviews.
+
+Contact Me
+----------
+
+If you have any additional questions about the data or the processes used to build them, please e-mail
+me at gayan.seneviratna@duke.edu.

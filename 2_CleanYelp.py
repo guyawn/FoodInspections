@@ -6,6 +6,10 @@ from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.metrics import edit_distance
 
+from gensim.models import KeyedVectors
+from gensim.test.utils import common_texts
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+
 if __name__ == "__main__":
 
     # Read the data in
@@ -84,22 +88,20 @@ if __name__ == "__main__":
     stopwords_eng = stopwords.words('english')
     reviewText = [[word for word in text if word not in stopwords_eng] for text in reviewText]
 
-    # Turn text into word stems and recombine
-    stemmer = PorterStemmer()
-    reviewText = [[stemmer.stem(word) for word in text] for text in reviewText]
-    reviewText = [" ".join(text) for text in reviewText]
+    # Recombine and turn into NLTK documents
+    reviewTexts = [" ".join(text) for text in reviewText]
+    documents = [TaggedDocument(doc, [i]) for i, doc in enumerate(reviewTexts)]
 
-    # Turn reviews into bag-of-words representations, keeping only the 1000 most common words
-    vectorizer = CountVectorizer(max_features=1000)
-    reviewBOW = vectorizer.fit_transform(reviewText).toarray()
+    # Run the Doc2Vec model building and identify these reviews in that space
+    model = Doc2Vec(documents, vector_size=50, window=2, min_count=1, workers=4)
+    docEmbeddings = [model.infer_vector(reviewText.split(" ")) for reviewText in reviewTexts]
 
     # Get the bag-of-words representation into a dataframe
-    reviewBOW = pd.DataFrame(reviewBOW)
-    reviewBOW.columns = vectorizer.get_feature_names()
-    reviewBOW['business_id'] = reviews['business_id']
-    reviewBOW = pd.pivot_table(reviewBOW, index='business_id', aggfunc=np.mean)
-    reviewBOW.columns = [("review_" + col) for col in reviewBOW.columns]
-    reviewBOW.reset_index(inplace=True)
+    reviewEmbeddings = pd.DataFrame(docEmbeddings)
+    reviewEmbeddings['business_id'] = reviews['business_id']
+    reviewEmbeddings = pd.pivot_table(reviewEmbeddings, index='business_id', aggfunc=np.mean)
+    reviewEmbeddings.columns = [("review_embedding_" + str(col)) for col in reviewEmbeddings.columns]
+    reviewEmbeddings.reset_index(inplace=True)
 
     ##
     # Finalize dataset
@@ -107,7 +109,7 @@ if __name__ == "__main__":
 
     # Combine the data sets together
     full = pd.merge(businesses, categories, on="business_id")
-    full = pd.merge(full, reviewBOW, on="business_id")
+    full = pd.merge(full, reviewEmbeddings, on="business_id")
 
     # Add the name name matching variable
     bad_match = ''

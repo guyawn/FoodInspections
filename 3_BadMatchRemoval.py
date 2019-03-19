@@ -3,8 +3,7 @@ import os.path
 
 if __name__ == "__main__":
 
-
-    #Check if the hand-coded name removal file exists.
+    # Check if the hand-coded name removal file exists.
     filePath = "Data/IncludesBadMatches/BadMatchRemoval.csv"
 
     if os.path.isfile(filePath):
@@ -21,7 +20,7 @@ if __name__ == "__main__":
         # Remove some restaurants that got added in from San Francisco for some reason.
         foodInspections = foodInspections.loc[foodInspections['longitude'] > -85]
 
-        #Drop the name matching column
+        # Drop the name matching column
         foodInspections.drop(['bad_name_match'], axis=1, inplace=True)
 
         # Write data

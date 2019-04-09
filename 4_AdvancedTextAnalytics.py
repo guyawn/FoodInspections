@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     # Add the name name matching variable
     # Write data
-    inspectionsPCA.to_csv("Data/FoodInspectionsPCA.csv", index=False)
+    inspectionsPCA.to_csv("Data/FoodInspectionsPCA300.csv", index=False)
     inspectionsD2V.to_csv("Data/FoodInspectionsD2V.csv", index=False)
 
 

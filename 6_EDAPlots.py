@@ -282,15 +282,5 @@ if __name__ == "__main__":
 
     # Review PCA TSNE
     foodReviews = foodInspectionsD2V.filter(regex="review_d2v_.*")
-    reviewTSNE = TSNE(n_components=2).fit_transform(foodReviews)
-    plt.scatter(reviewTSNE[:, 0][foodInspectionsD2V['had_critical_violation'] == 1],
-                reviewTSNE[:, 1][foodInspectionsD2V['had_critical_violation'] == 1],
-                label='Had Critical Violation')
-    plt.scatter(reviewTSNE[:, 0][foodInspectionsD2V['had_critical_violation'] == 0],
-                reviewTSNE[:, 1][foodInspectionsD2V['had_critical_violation'] == 0],
-                label='None')
-    plt.legend(loc="best")
-    plt.title("T-SNE for " + str(foodReviews.shape[1]-1) + " D2V Terms")
-    plt.xlabel("Component 1")
-    plt.ylabel("Component 2")
+
     generate_plot("Figures/EDA/Review-D2V-TSNE.png")

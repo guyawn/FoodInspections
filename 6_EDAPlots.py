@@ -14,7 +14,7 @@ def generate_plot(outfile):
 if __name__ == "__main__":
 
     # Read the food inspections
-    foodInspections = pd.read_csv("Data/FoodInspections.csv")
+    foodInspections = pd.read_csv("Data/Full/FoodInspections.csv")
     foodInspections['Price'] = ''
     foodInspections.loc[foodInspections['price_$']==1, 'Price'] = '$'
     foodInspections.loc[foodInspections['price_$$']==1, 'Price'] = '$$'
@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
 
     # Read the PCA food inspections
-    foodInspectionsPCA = pd.read_csv("Data/FoodInspectionsPCA.csv")
+    foodInspectionsPCA = pd.read_csv("Data/Full/FoodInspectionsPCA.csv")
 
     # Review PCA TSNE
     foodReviews = foodInspectionsPCA.filter(regex="review_pca_.*")
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     generate_plot("Figures/EDA/Review-PCA-TSNE.png")
 
     # Read the D2V food inspections
-    foodInspectionsD2V = pd.read_csv("Data/FoodInspectionsD2V.csv")
+    foodInspectionsD2V = pd.read_csv("Data/Full/FoodInspectionsD2V.csv")
 
     # Review PCA TSNE
     foodReviews = foodInspectionsD2V.filter(regex="review_d2v_.*")

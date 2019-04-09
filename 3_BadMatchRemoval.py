@@ -24,7 +24,7 @@ if __name__ == "__main__":
         foodInspections.drop(['bad_name_match'], axis=1, inplace=True)
 
         # Write data
-        foodInspections.to_csv("Data/FoodInspections.csv", index=False)
+        foodInspections.to_csv("Data/Full/FoodInspections.csv", index=False)
 
     else:
 

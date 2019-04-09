@@ -58,7 +58,7 @@ if __name__ == "__main__":
     # Get the outcome data
     ##
 
-    outcomes = pd.read_csv("Data/FoodInspectionsPCA300.csv")
+    outcomes = pd.read_csv("Data/Full/FoodInspectionsPCA300.csv")
     outcomes = outcomes[['business_id', 'had_critical_violation']]
 
     ##
@@ -157,11 +157,11 @@ if __name__ == "__main__":
     reviewPCA.reset_index(inplace=True)
 
     #Read the original data and remove the review problems
-    foodInspections = pd.read_csv("Data/FoodInspections.csv")
+    foodInspections = pd.read_csv("Data/Full/FoodInspections.csv")
     reviewCols = [col for col in list(foodInspections) if re.search('review_', col)]
     foodInspections.drop(columns=reviewCols, inplace=True)
 
     #Write the reduced PCA output
     foodInspectionsPCA100 = pd.merge(foodInspections, reviewPCA)
 
-    foodInspectionsPCA100.to_csv("Data/FoodInspectionsPCA100.csv", index=False)
+    foodInspectionsPCA100.to_csv("Data/Full/FoodInspectionsPCA100.csv", index=False)

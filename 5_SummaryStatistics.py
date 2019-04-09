@@ -12,7 +12,7 @@ if __name__ == "__main__":
     sum(wake_county_locations['FACILITYTYPE'] == 'Restaurant')
 
     # Read the final dataset
-    inspections = pd.read_csv('Data/FoodInspections.csv')
+    inspections = pd.read_csv('Data/Full/FoodInspections.csv')
 
     # Number of restaurants
     len(inspections)

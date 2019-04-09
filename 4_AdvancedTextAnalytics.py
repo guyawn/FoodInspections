@@ -90,7 +90,7 @@ if __name__ == "__main__":
     # Finalize datasets
     ##
 
-    inspections = pd.read_csv('Data/FoodInspections.csv')
+    inspections = pd.read_csv('Data/Full/FoodInspections.csv')
     reviewColumns = [var for var in list(inspections) if re.match("review_.*", var)]
     inspections.drop(columns = reviewColumns, inplace=True)
 
@@ -100,8 +100,8 @@ if __name__ == "__main__":
 
     # Add the name name matching variable
     # Write data
-    inspectionsPCA.to_csv("Data/FoodInspectionsPCA300.csv", index=False)
-    inspectionsD2V.to_csv("Data/FoodInspectionsD2V.csv", index=False)
+    inspectionsPCA.to_csv("Data/Full/FoodInspectionsPCA300.csv", index=False)
+    inspectionsD2V.to_csv("Data/Full/FoodInspectionsD2V.csv", index=False)
 
 
 

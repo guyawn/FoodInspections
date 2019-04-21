@@ -91,11 +91,13 @@ if __name__ == "__main__":
     ##
 
     inspections = pd.read_csv('Data/Full/FoodInspections.csv')
+    review_count = inspections['review_count']
     reviewColumns = [var for var in list(inspections) if re.match("review_.*", var)]
     inspections.drop(columns = reviewColumns, inplace=True)
 
     # Combine the data sets together
     inspectionsPCA = pd.merge(inspections, reviewPCA, on="business_id")
+    inspectionsPCA['review_count'] = review_count
     inspectionsD2V = pd.merge(inspections, reviewDoc2Vec, on="business_id")
 
     # Add the name name matching variable

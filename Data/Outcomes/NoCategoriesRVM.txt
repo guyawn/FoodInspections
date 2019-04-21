@@ -1,0 +1,6 @@
+['review_pca_43', 'review_pca_10', 'review_pca_306', 'review_pca_231', 'review_pca_258', 'review_pca_321', 'review_pca_35', 'review_pca_188', 'review_pca_45', 'rev
+iew_pca_14', 'review_pca_240', 'review_pca_107', 'review_pca_51', 'review_pca_80', 'review_pca_125', 'review_pca_270', 'review_pca_149', 'review_pca_293', 'review_pca_7', 'r
+eview_pca_116', 'review_pca_255', 'review_pca_212', 'review_pca_320', 'review_pca_330', 'review_pca_38', 'review_pca_20', 'review_pca_61', 'review_pca_111', 'review_pca_247'
+, 'review_pca_313', 'review_pca_309', 'review_pca_18', 'review_pca_271', 'review_pca_17', 'review_pca_297', 'review_pca_64', 'review_pca_103', 'review_pca_205', 'review_pca_
+90', 'review_pca_169', 'review_pca_342', 'review_pca_87', 'review_pca_31', 'review_pca_117', 'review_pca_49', 'city_Angier', 'city_Durham', 'review_pca_261', 'city_West_Cary
+', 'review_pca_131', 'review_pca_54', 'review_pca_251', 'review_pca_72']

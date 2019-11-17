@@ -9,12 +9,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+import dill
 
+def get_rvm_set(name, step=2, indexMin=1, indexMax=9999):
 
-def get_rvm_set(name):
-
-    X_train = pd.read_csv("Data/Modelling/" + name + "PredictorsTrain.csv")
-    X_test = pd.read_csv("Data/Modelling/" + name + "PredictorsTest.csv")
+    x_train = pd.read_csv("Data/Modelling/" + name + "PredictorsTrain.csv")
+    x_test = pd.read_csv("Data/Modelling/" + name + "PredictorsTest.csv")
     y_train = pd.read_csv("Data/Modelling/" + name + "OutcomesTrain.csv", header=None)
     y_test = pd.read_csv("Data/Modelling/" + name + "OutcomesTest.csv", header=None)
 
@@ -24,113 +25,88 @@ def get_rvm_set(name):
     c, r = y_test.shape
     y_test = y_test.values.reshape(c, )
 
-    clf.fit(X_train, y_train)
-    goodIndices = list((np.where(np.sum(abs(clf.relevance_), axis=0) != 0))[0])
+    clf.fit(x_train, y_train)
 
-    X_train = X_train.iloc[:, goodIndices]
-    X_test = X_test.iloc[:, goodIndices]
+    indices_ordered = np.flip(np.argsort(np.var(clf.relevance_, axis=0)))
+    indices_zero = np.where(np.var(clf.relevance_, axis=0) == 0)
+    indices_ordered = indices_ordered[~np.in1d(indices_ordered, indices_zero)]
+    indices_ordered = indices_ordered[0:(int(len(indices_ordered) / 2))]
 
-    clf.fit(X_train, y_train)
+    indices_to_include = np.arange(1, len(indices_ordered)+1, step)
+    indices_to_include = np.clip(indices_to_include, indexMin, indexMax)
+    indices_to_include = np.unique(indices_to_include)
 
-    scores = clf.predict_proba(X_train)
+    aucs = []
+
+    for i in indices_to_include:
+
+        good_indices = indices_ordered[:i]
+        x_train_limited = x_train.iloc[:, good_indices]
+
+        x_train_temp, x_test_temp, y_train_temp, y_test_temp = train_test_split(x_train_limited,
+                                                            y_train,
+                                                            test_size=0.4,
+                                                            shuffle=True)
+
+        y_train_temp = [list(a)[0] for a in list(y_train_temp.values)]
+        y_train_temp = np.array(y_train_temp)
+
+        clf.fit(x_train_temp, y_train_temp)
+
+        scores = clf.predict_proba(x_test_temp)
+        scores = [score[1] for score in scores]
+        fp, tp, _ = metrics.roc_curve(y_test_temp, scores)
+        train_auc = metrics.auc(fp, tp)
+
+        aucs.append(train_auc)
+
+        print(str(i) + " of " + str(len(indices_ordered)+1) + ": " + str(train_auc))
+
+
+    best_indices_include = indices_to_include[np.array(aucs).argmax()]
+    best_indices = indices_ordered[0:best_indices_include]
+
+    x_train_best = x_train.iloc[:, best_indices]
+    x_test_best = x_test.iloc[:, best_indices]
+
+    y_train = [list(a)[0] for a in list(y_train.values)]
+    y_train = np.array(y_train)
+
+    clf.fit(x_train_best, y_train)
+
+    scores = clf.predict_proba(x_train_best)
     scores = [score[1] for score in scores]
     fp, tp, _ = metrics.roc_curve(y_train, scores)
-    trainAUC = metrics.auc(fp, tp)
+    train_auc = metrics.auc(fp, tp)
 
-    scores = clf.predict_proba(X_test)
+    scores = clf.predict_proba(x_test_best)
     scores = [score[1] for score in scores]
     fp, tp, _ = metrics.roc_curve(y_test, scores)
-    testAUC = metrics.auc(fp, tp)
+    test_auc = metrics.auc(fp, tp)
 
     print("---------------------------")
     print("Model: " + name)
     print("Variables: " + str(np.sum(np.sum(abs(clf.relevance_), axis=0) > 0)))
-    print("Train AUC: " + str(trainAUC- 0.01))
-    print("Test AUC: " + str(testAUC))
+    print("Train AUC: " + str(train_auc))
+    print("Test AUC: " + str(test_auc))
 
-    return clf
+    return clf, best_indices
 
 if __name__ == "__main__":
 
     # Simple Model
-    rvmSimple = get_rvm_set("Simple")
-
-    # Full Model
-    rvmFull = get_rvm_set("Full")
+    rvmSimple, varsSimple = get_rvm_set("Simple", 2)
 
     # No Reviews Model
-    rvmNoReviews = get_rvm_set("NoReviews")
+    rvmNoReviews, varsNoReviews = get_rvm_set("NoReviews", 2)
 
     # No Categories Model
-    rvmNoCategories = get_rvm_set("NoCategories")
+    rvmNoCategories, varsNoCategories = get_rvm_set("NoCategories", 5)
 
-    name = "NoReviews"
-    X_train = pd.read_csv("Data/Modelling/" + name + "PredictorsTrain.csv")
-    X_test = pd.read_csv("Data/Modelling/" + name + "PredictorsTest.csv")
-    y_train = pd.read_csv("Data/Modelling/" + name + "OutcomesTrain.csv", header=None)
-    y_test = pd.read_csv("Data/Modelling/" + name + "OutcomesTest.csv", header=None)
+    # Full Model
+    rvmFull, varsFull = get_rvm_set("Full", 30)
 
-    c, r = y_train.shape
-    y_train = y_train.values.reshape(c, )
-    c, r = y_test.shape
-    y_test = y_test.values.reshape(c, )
+    #Save the models
+    dill.dump_session("RVM-Models.pkl")
 
 
-    scores = rvmNoReviews.predict_proba(X_test)
-    scoresRVM = [score[1] for score in scores]
-    fp, tp, _ = metrics.roc_curve(y_test, scoresRVM)
-
-    X_train = pd.read_csv("Data/Modelling/FullPredictorsTrain.csv")
-    X_test = pd.read_csv("Data/Modelling/FullPredictorsTest.csv")
-    log = LogisticRegression(solver='lbfgs')
-    variable_set = pd.read_csv("Data/Outcomes/" + name + "Logistic.csv")
-    variable_set = list(variable_set['LogisticSet'].values)
-    X_train_log = X_train[variable_set]
-    X_test_log = X_test[variable_set]
-    log.fit(X_train_log, y_train)
-
-    scores = log.predict_proba(X_test_log)
-    scoresLog = [score[1] for score in scores]
-    fp_log, tp_log, _ = metrics.roc_curve(y_test, scoresLog)
-
-
-    plt.close()
-    plt.plot(fp, tp, linewidth=1, label="RVM Model (No Reviews)")
-    plt.plot(fp_log, tp_log, linewidth=1, label="Logistic Model (All)")
-    pfa_chance = np.arange(0, 1, 0.01)
-    pd_chance = np.arange(0, 1, 0.01)
-    pfa_perfect = [0] * len(fp)
-    pd_perfect = [1] * len(fp)
-    plt.plot(pfa_chance, pd_chance, linestyle=":", label="Chance")
- #   plt.plot(pfa_perfect, pd_perfect, linestyle=":", label="Perfect Model")
-
-    plt.legend(loc="best")
-    plt.title("ROC for Best Models")
-    plt.xlabel("False Positives")
-    plt.ylabel("True Positives")
-    plt.savefig("Figures/Modelling/BestModelROCs.png")
-
-    mean0 = np.mean(np.array(scoresLog)[y_test == 0])
-    mean1 = np.mean(np.array(scoresLog)[y_test == 1])
-    grandMean = np.mean(np.array(scoresLog))
-
-    n0 = np.sum(y_test == 0)
-    n1 = np.sum(y_test == 1)
-    ss0 = n0 * np.square(mean0 - grandMean)
-    ss1 = n1 * np.square(mean1 - grandMean)
-    ssb = ss0 + ss1
-
-    ssb/np.sum(np.square(scoresLog - grandMean))
-
-    pd.DataFrame({'Outcome': y_test,
-                            'Log': scoresLog,
-                            'RVM': scoresRVM}).to_csv("Data/Outcomes/Ranks.csv")
-
-    rvmRel = np.var(rvmNoReviews.relevance_, axis=0)[np.array([(x in list(X_train_log)) for x in list(X_train)])]
-
-
-
-
-    pd.DataFrame({'Variable' : list(X_train),
-                  'Log Coefficient' : abs(clf.coef_[0]),
-                  'No Abs Log Coefficient': (clf.coef_[0])}).to_csv("Data/Outcomes/Vars.csv")

@@ -38,8 +38,7 @@ if __name__ == "__main__":
     # Transform data into binary for had critical violation or not
     violations = pd.DataFrame(violations['HSISID'].value_counts())
     violations.reset_index(inplace=True)
-    violations.columns = ['HSISID', 'HAD_CRITICAL_VIOLATION']
-    violations['HAD_CRITICAL_VIOLATION'] = [int(count > 0) for count in violations['HAD_CRITICAL_VIOLATION']]
+    violations.columns = ['HSISID', 'CRITICAL_VIOLATIONS']
 
     # Merge the datasets together and replace NaN with 0 (for no critical violations
     wake_county = pd.merge(locations, violations, on="HSISID", how="left")

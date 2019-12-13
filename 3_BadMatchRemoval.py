@@ -3,7 +3,6 @@ import os.path
 
 if __name__ == "__main__":
 
-
     #Check if the hand-coded name removal file exists.
     filePath = "Data/IncludesBadMatches/BadMatchRemoval.csv"
 

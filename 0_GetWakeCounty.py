@@ -6,10 +6,10 @@ import re
 import urllib.request
 
 # Geocode information for the restaurants. Includes the date a restaurant was founded.
-restaurant_locations_url = "https://opendata.arcgis.com/datasets/124c2187da8c41c59bde04fa67eb2872_0.csv?outSR=%7B%22wkid%22%3A102719%2C%22latestWkid%22%3A2264%7D"
+restaurant_locations_url = "https://opendata.arcgis.com/datasets/124c2187da8c41c59bde04fa67eb2872_0.csv?outSR=%7B%22latestWkid%22%3A2264%2C%22wkid%22%3A102719%7D"
 
 # The list of all violations by restaurants
-restaurant_violations_url = "https://opendata.arcgis.com/datasets/9b04d0c39abd4e049cbd4656a0a04ba3_2.csv?outSR=%7B%22wkid%22%3A102719%2C%22latestWkid%22%3A2264%7D"
+restaurant_violations_url = "https://opendata.arcgis.com/datasets/9b04d0c39abd4e049cbd4656a0a04ba3_2.csv?outSR=%7B%22latestWkid%22%3A2264%2C%22wkid%22%3A102719%7D"
 
 
 if __name__ == "__main__":

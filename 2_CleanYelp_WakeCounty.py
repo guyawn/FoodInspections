@@ -1,9 +1,4 @@
 import pandas as pd
-import numpy as np
-from nltk import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
-from sklearn.feature_extraction.text import CountVectorizer
 from nltk.metrics import edit_distance
 
 if __name__ == "__main__":
@@ -11,7 +6,6 @@ if __name__ == "__main__":
     # Read the data in
     businesses = pd.read_csv("Data/Yelp/Businesses.csv")
     categories = pd.read_csv("Data/Yelp/Categories.csv")
-    reviews = pd.read_csv("Data/Yelp/Reviews.csv")
 
     ##
 
@@ -44,7 +38,6 @@ if __name__ == "__main__":
 
     businesses = businesses.drop_duplicates()
     categories = categories.drop_duplicates()
-    reviews = reviews.drop_duplicates()
 
     businesses.insert(2, 'wake_county_name', wake_county_name)
     businesses.insert(5, 'years_open', years_open)
@@ -71,35 +64,6 @@ if __name__ == "__main__":
     # Process Reviews
     ##
 
-    # Pull the most recent three reviews for each business
-    reviewText = reviews['text']
-
-    # Turn the review text into word tokens
-    reviewText = [word_tokenize(review) for review in reviewText]
-
-    # Turn text into lowercase
-    reviewText = [[word.lower() for word in text] for text in reviewText]
-
-    # Remove the stopwords
-    stopwords_eng = stopwords.words('english')
-    reviewText = [[word for word in text if word not in stopwords_eng] for text in reviewText]
-
-    # Turn text into word stems and recombine
-    stemmer = PorterStemmer()
-    reviewText = [[stemmer.stem(word) for word in text] for text in reviewText]
-    reviewText = [" ".join(text) for text in reviewText]
-
-    # Turn reviews into bag-of-words representations, keeping only the 1000 most common words
-    vectorizer = CountVectorizer(max_features=1000)
-    reviewBOW = vectorizer.fit_transform(reviewText).toarray()
-
-    # Get the bag-of-words representation into a dataframe
-    reviewBOW = pd.DataFrame(reviewBOW)
-    reviewBOW.columns = vectorizer.get_feature_names()
-    reviewBOW['business_id'] = reviews['business_id']
-    reviewBOW = pd.pivot_table(reviewBOW, index='business_id', aggfunc=np.mean)
-    reviewBOW.columns = [("review_" + col) for col in reviewBOW.columns]
-    reviewBOW.reset_index(inplace=True)
 
     ##
     # Finalize dataset
@@ -107,7 +71,6 @@ if __name__ == "__main__":
 
     # Combine the data sets together
     full = pd.merge(businesses, categories, on="business_id")
-    full = pd.merge(full, reviewBOW, on="business_id")
 
     # Add the name name matching variable
     bad_match = ''

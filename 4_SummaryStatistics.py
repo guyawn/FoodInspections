@@ -33,8 +33,8 @@ if __name__ == "__main__":
     len([col for col in inspections.columns if bool(re.search("category", col))])
 
     # Number of restaurants with a critical violation
-    sum(inspections['had_critical_violation'])
-    sum(inspections['had_critical_violation']) / len(inspections)
+    sum(inspections['critical_violation'])
+    sum(inspections['critical_violation']) / len(inspections)
 
     # Number of restaurants which closed
     sum(inspections['is_closed'])

@@ -1,4 +1,5 @@
 config.json
 Archive/
 .idea/
+.ipynb_checkpoints/
 Data/Wake_County/Restaurants_in_Wake_County__Violations.csv
